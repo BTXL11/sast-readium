@@ -36,6 +36,16 @@ void ViewWidget::loadScrollArea(QList<QImage> imageCache){
     if(imageCache.empty()){
         return;
     }
+    if(scrollArea->widget() != nullptr){
+        scrollArea->setWidget(nullptr);
+    }
+    if(scrollLayout != nullptr){
+        delete scrollLayout;
+    }
+    if(scrollWidget != nullptr){
+        delete scrollWidget;
+    }
+    
     scrollWidget = new QWidget();
     scrollLayout = new QVBoxLayout(scrollWidget);
     for(auto image : imageCache){
