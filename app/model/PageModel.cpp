@@ -17,9 +17,16 @@ int PageModel::totalPages() const { return _totalPages; }
 void PageModel::setCurrentPage(int pageNum) {
     if (pageNum >= 0 && pageNum <= _totalPages-1 && pageNum != _currentPage) {
         _currentPage = pageNum;
-        _renderModel->renderPage(_currentPage);
         emit pageUpdate(_currentPage);
+        //emit pageUpdate(pageAt(_currentPage));
     }
+}
+
+QImage PageModel::pageAt(int pageNum) const{
+    if(pageNum < 0 || pageNum >= _totalPages){
+        return QImage();
+    }
+    return _ImageCache[pageNum];
 }
 
 void PageModel::nextPage() {

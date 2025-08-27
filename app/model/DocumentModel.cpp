@@ -2,6 +2,7 @@
 #include <algorithm>
 #include "RenderModel.h"
 #include "qimage.h"
+#include <QList>
 #include "qmessagebox.h"
 
 DocumentModel::DocumentModel(RenderModel* _renderModel): renderModel(_renderModel) {
@@ -29,7 +30,11 @@ bool DocumentModel::openFromFile(const QString& filePath) {
     qDebug() << "Opened successfully:" << filePath;
 
     renderModel->setDocument(document.get());
-    QImage image = renderModel->renderPage();
+    QList<QImage> imageCache;
+    for(int i=0;i<document->numPages();i++){
+        imageCache.append(renderModel->renderPage(i,144.0,144.0,-1,-1,-1,-1));
+    }
+    emit renderAllPagesDone(imageCache);
 
     return true;
 }

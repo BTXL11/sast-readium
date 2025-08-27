@@ -7,6 +7,7 @@ MenuBar::MenuBar(QWidget* parent) : QMenuBar(parent) {
     createFileMenu();
     createViewMenu();
     createThemeMenu();
+    createFlipMenu();
 }
 
 void MenuBar::createFileMenu() {
@@ -81,4 +82,37 @@ void MenuBar::createThemeMenu() {
 
     // init
     darkThemeAction->setChecked(true);
+}
+
+void MenuBar::createFlipMenu() {
+    QMenu* flipMenu = new QMenu(tr("翻页(F)"), this);
+    addMenu(flipMenu);
+
+    QAction* flipScrollAction = new QAction(tr("滚动翻页"), this);
+    flipScrollAction->setCheckable(true);
+
+    QAction* flipPageAction = new QAction(tr("页面翻页"), this);
+    flipPageAction->setCheckable(true);
+
+    QActionGroup* flipGroup = new QActionGroup(this);
+    flipGroup->addAction(flipScrollAction);
+    flipGroup->addAction(flipPageAction);
+
+    connect(flipScrollAction, &QAction::triggered, this, [this](bool checked) {
+        if (checked) {
+            emit flipChanged("scroll");
+        }
+    });
+
+    connect(flipPageAction, &QAction::triggered, this, [this](bool checked) {
+        if (checked) {
+            emit flipChanged("left-right");
+        }
+    });
+
+    flipMenu->addAction(flipScrollAction);
+    flipMenu->addAction(flipPageAction);
+
+    // init
+    flipPageAction->setChecked(true);
 }

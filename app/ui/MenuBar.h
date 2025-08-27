@@ -11,10 +11,12 @@ public:
 
 signals:
     void themeChanged(const QString& theme);
+    void flipChanged(const QString& flip);
     void onExecuted(ActionMap id, QWidget* context = nullptr);
 
 private:
     void createFileMenu();
     void createViewMenu();
     void createThemeMenu();
+    void createFlipMenu();
 };

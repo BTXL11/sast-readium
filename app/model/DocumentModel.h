@@ -4,6 +4,8 @@
 #include <QFileDialog>
 #include <QObject>
 #include <QString>
+#include <QImage>
+#include <QList>
 #include "qtmetamacros.h"
 #include "RenderModel.h"
 
@@ -22,5 +24,5 @@ public:
     bool isNULL();
     bool openFromFile(const QString& filePath);
 signals:
-    void renderPageDone(QImage image);
+    void renderAllPagesDone(QList<QImage> imageCache);
 };

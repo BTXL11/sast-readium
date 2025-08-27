@@ -70,10 +70,20 @@ void MainWindow::initConnection() {
 
     connect(menuBar, &MenuBar::themeChanged, this, &MainWindow::applyTheme);
 
+    connect(menuBar,&MenuBar::flipChanged,viewWidget,&ViewWidget::changeFlip);
+
     connect(menuBar, &MenuBar::onExecuted, documentController, &DocumentController::execute);
 
     connect(renderModel, &RenderModel::renderPageDone, viewWidget, &ViewWidget::changeImage);
+    connect(pageModel,&PageModel::pageUpdate, [=](int newPageNum){
+        viewWidget->changeImage(pageModel->pageAt(newPageNum));
+    });
     connect(renderModel, &RenderModel::documentChanged, pageModel, &PageModel::updateInfo);
+    connect(documentModel, &DocumentModel::renderAllPagesDone, pageModel, &PageModel::updateImageCache);
+    connect(documentModel, &DocumentModel::renderAllPagesDone, [=](QList<QImage> imageCache){
+        viewWidget->changeImage(imageCache.first());
+    });
+    connect(documentModel, &DocumentModel::renderAllPagesDone, viewWidget,&ViewWidget::loadScrollArea);
 }
 
 // function

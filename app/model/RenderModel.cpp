@@ -21,7 +21,6 @@ QImage RenderModel::renderPage(int pageNum,double xres,double yres,int x,int y,i
         qDebug() << "Failed to render page";
         return QImage();
     }
-    emit renderPageDone(image);
     return image;
 }
 
