@@ -15,7 +15,8 @@ ViewWidget::ViewWidget(QWidget* parent) : QWidget(parent) {
     scrollArea = new QScrollArea(this);
     scrollArea->setAlignment(Qt::AlignCenter);
     scrollArea->setWidgetResizable(true);
-    scrollArea->setFixedSize(1000, 600);
+    scrollArea->setFixedSize(500,700);
+    scrollArea->move(100,0);
     scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     scrollArea->setBackgroundRole(QPalette::Dark);
@@ -29,7 +30,8 @@ void ViewWidget::changeImage(const QImage& image) {
         label->setText("无法渲染页面");
         return;
     }
-    label->setPixmap(QPixmap::fromImage(image));
+    label->setPixmap(QPixmap::fromImage(image.scaled(label->size() , Qt::KeepAspectRatio, Qt::SmoothTransformation)));
+
 }
 
 void ViewWidget::loadScrollArea(QList<QImage> imageCache){
@@ -38,11 +40,7 @@ void ViewWidget::loadScrollArea(QList<QImage> imageCache){
     }
     if(scrollArea->widget() != nullptr){
         scrollArea->setWidget(nullptr);
-    }
-    if(scrollLayout != nullptr){
         delete scrollLayout;
-    }
-    if(scrollWidget != nullptr){
         delete scrollWidget;
     }
     
@@ -50,7 +48,7 @@ void ViewWidget::loadScrollArea(QList<QImage> imageCache){
     scrollLayout = new QVBoxLayout(scrollWidget);
     for(auto image : imageCache){
         QLabel* label = new QLabel();
-        label->setPixmap(QPixmap::fromImage(image));
+        label->setPixmap(QPixmap::fromImage(image.scaled(scrollArea->size() , Qt::KeepAspectRatio, Qt::SmoothTransformation)));
         label->setScaledContents(true);
         scrollLayout->addWidget(label);
     }

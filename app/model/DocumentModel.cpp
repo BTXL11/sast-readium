@@ -30,7 +30,7 @@ bool DocumentModel::openFromFile(const QString& filePath) {
     renderModel->setDocument(document.get());
     QList<QImage> imageCache;
     for(int i=0;i<document->numPages();i++){
-        imageCache.append(renderModel->renderPage(i,144.0,144.0,-1,-1,-1,-1));
+        imageCache.append(renderModel->renderPage(i,432.0,432.0,-1,-1,-1,-1));
     }
     emit renderAllPagesDone(imageCache);
 
