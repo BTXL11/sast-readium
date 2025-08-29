@@ -17,7 +17,6 @@ void PageModel::setCurrentPage(int pageNum) {
     if (pageNum >= 0 && pageNum <= _totalPages-1 && pageNum != _currentPage) {
         _currentPage = pageNum;
         emit pageUpdate(_currentPage);
-        //emit pageUpdate(pageAt(_currentPage));
     }
 }
 

@@ -23,6 +23,4 @@ public:
     ~DocumentModel() {};
     bool isNULL();
     bool openFromFile(const QString& filePath);
-signals:
-    void renderAllPagesDone(QList<QImage> imageCache);
 };

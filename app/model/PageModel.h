@@ -29,7 +29,6 @@ public slots:
 
 signals:
     void pageUpdate(int currentPage);
-    //void pageUpdate(QImage image);
 
 private:
     int _totalPages;
