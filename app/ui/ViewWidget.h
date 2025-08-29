@@ -6,12 +6,17 @@
 #include <QImage>
 #include <QPixmap>
 #include "qboxlayout.h"
+#include "qgraphicsview.h"
+#include "qobject.h"
 #include "qscrollarea.h"
 #include "qtmetamacros.h"
 #include "QScrollArea"
 #include "qwidget.h"
 #include <QString>
 #include <memory>
+#include <QGraphicsView>
+#include <QGraphicsScene>
+#include <QGraphicsPixmapItem>
 
 class ViewWidget : public QWidget {
     Q_OBJECT
@@ -23,10 +28,14 @@ public slots:
     void loadScrollArea(QList<QImage> imageCache);
     void changeFlip(QString flip);
 private:
-    QLabel* label;
+    QGraphicsView* view;
+    QGraphicsScene* scene;
+    QGraphicsPixmapItem* pixmapItem;
     QVBoxLayout* layout;
+
+    QGraphicsView* scrollView;
+    QGraphicsScene* scrollScene;
     QVBoxLayout* scrollLayout;
-    QWidget* scrollWidget;
-    QScrollArea* scrollArea;
+
     QString flip = "left-right";
 };

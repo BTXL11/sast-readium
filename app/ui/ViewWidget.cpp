@@ -1,6 +1,8 @@
 #include "ViewWidget.h"
 #include <QLabel>
 #include <QVBoxLayout>
+#include "qgraphicsitem.h"
+#include "qgraphicsview.h"
 #include "qmessagebox.h"
 #include "qnamespace.h"
 #include "qpalette.h"
@@ -8,61 +10,81 @@
 
 ViewWidget::ViewWidget(QWidget* parent) : QWidget(parent) {
     layout = new QVBoxLayout(this);
-    label = new QLabel("PDF渲染窗口");
-    label->setAlignment(Qt::AlignCenter);
-    layout->addWidget(label);
-    label->close();
+    scene = new QGraphicsScene(this);
+    view = new QGraphicsView(scene, this);
+    view->setRenderHint(QPainter::Antialiasing, true);
+    view->setRenderHint(QPainter::TextAntialiasing, true);
+    view->setRenderHint(QPainter::SmoothPixmapTransform, true);
+    view->setAlignment(Qt::AlignCenter);
+    view->setBackgroundRole(QPalette::Dark);
+    pixmapItem = nullptr;
+    layout->addWidget(view);
+    setMinimumSize(200, 200);
+    setAutoFillBackground(true);
 
-    scrollArea = new QScrollArea(this);
-    scrollArea->setAlignment(Qt::AlignCenter);
-    scrollArea->setWidgetResizable(true);
-    scrollArea->setFixedSize(750,700);
-    scrollArea->move(100,0);
-    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    scrollArea->setBackgroundRole(QPalette::Dark);
-    scrollArea->close();
-    
+    scrollView = new QGraphicsView();
+    scrollView->setRenderHint(QPainter::Antialiasing, true);
+    scrollView->setRenderHint(QPainter::TextAntialiasing, true);
+    scrollView->setRenderHint(QPainter::SmoothPixmapTransform, true);
+    scrollView->setAlignment(Qt::AlignCenter);
+    scrollView->setBackgroundRole(QPalette::Dark);
+    scrollView->close();
+    scrollScene = nullptr;
+
     changeFlip("left-right");
 }
 
 void ViewWidget::changeImage(const QImage& image) {
-    if(image.isNull()){
-        label->setText("无法渲染页面");
+    scene->clear();
+    if (image.isNull()) {
+        pixmapItem = nullptr;
         return;
     }
-    label->setPixmap(QPixmap::fromImage(image).scaled(label->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    QPixmap pixmap = QPixmap::fromImage(image);
+    pixmapItem = scene->addPixmap(pixmap);
+    pixmapItem->setTransformationMode(Qt::SmoothTransformation);
+    scene->setSceneRect(pixmap.rect());
+    view->fitInView(pixmapItem, Qt::KeepAspectRatio);
 }
 
 void ViewWidget::loadScrollArea(QList<QImage> imageCache){
     if(imageCache.empty()){
         return;
     }
-    if(scrollArea->widget() != nullptr){
-        scrollArea->setWidget(nullptr);
-        delete scrollLayout;
-        delete scrollWidget;
+    if(scrollScene!= nullptr)
+    {
+        scrollView->setScene(nullptr);
+        delete scrollScene;
     }
-    
-    scrollWidget = new QWidget();
-    scrollLayout = new QVBoxLayout(scrollWidget);
+    scrollScene = new QGraphicsScene(this);
+    int height = 0;
     for(auto image : imageCache){
-        QLabel* label = new QLabel();
-        label->setPixmap(QPixmap::fromImage(image).scaled(label->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-        label->setScaledContents(true);
-        scrollLayout->addWidget(label);
+        QPixmap pixmap = QPixmap::fromImage(image.scaled(scrollView->width(),scrollView->height(),Qt::KeepAspectRatio,Qt::SmoothTransformation));
+        QGraphicsPixmapItem* item = scrollScene->addPixmap(pixmap);
+        item->setPos(0,height); 
+        height += pixmap.height();
     }
-    scrollArea->setWidget(scrollWidget);
-    
+    scrollView->setScene(scrollScene);
 }
 
 void ViewWidget::changeFlip(QString flip){
-    if(flip == "left-right"){
-        scrollArea->close();
-        label->show();
-    }else if(flip == "scroll"){
-        label->close();
-        scrollArea->show();
+    if(flip != "left-right" && flip != "scroll"){
+        QMessageBox::warning(this, "Error", "Invalid flip value");
+        return;
+    }
+    if(flip == this->flip){
+        return;
+    }
+    if(flip == "left-right" && this->flip == "scroll"){
+        layout->removeWidget(scrollView);
+        layout->addWidget(view);
+        scrollView->close();
+        view->show();
+    }else if(flip == "scroll" && this->flip == "left-right"){
+        layout->removeWidget(view);
+        layout->addWidget(scrollView);
+        view->close();
+        scrollView->show();
     }
     this->flip = flip;
 }
