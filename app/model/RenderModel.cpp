@@ -23,6 +23,29 @@ QImage RenderModel::renderPage(int pageNum,double xres,double yres,int x,int y,i
     return image;
 }
 
+QList<QImage> RenderModel::renderAllPages(double xres,double yres,int x,int y,int w,int h){
+    QList<QImage> imageCache;
+    if(!document){
+        qDebug() << "Document not loaded";
+        return imageCache;
+    }
+    for(int i=0;i<document->numPages();i++){
+        std::unique_ptr<Poppler::Page> pdfPage = document->page(i);
+        if(!pdfPage){
+            qDebug() << "Page not found: " << i;
+            continue;
+        }
+        QImage image = pdfPage->renderToImage(xres,yres,x,y,w,h);
+        if(image.isNull()){
+            qDebug() << "Failed to render page: " << i;
+            continue;
+        }
+        imageCache.append(image);
+    }
+    emit renderAllPagesDone(imageCache);
+    return imageCache;
+}
+
 int RenderModel::getPageCount(){
     if(!document){
         return 0;

@@ -24,15 +24,15 @@ bool DocumentModel::openFromFile(const QString& filePath) {
         document.release();
     }
     document = std::move(_document);
+    document->setRenderHint(Poppler::Document::Antialiasing, true);
+    document->setRenderHint(Poppler::Document::TextAntialiasing, true);
+    document->setRenderHint(Poppler::Document::TextHinting, true);
+    document->setRenderHint(Poppler::Document::TextSlightHinting, true);
     currentFilePath = filePath;
     qDebug() << "Opened successfully:" << filePath;
 
     renderModel->setDocument(document.get());
-    QList<QImage> imageCache;
-    for(int i=0;i<document->numPages();i++){
-        imageCache.append(renderModel->renderPage(i,432.0,432.0,-1,-1,-1,-1));
-    }
-    emit renderAllPagesDone(imageCache);
+    renderModel->renderAllPages(288.0,288.0,-1,-1,-1,-1);
 
     return true;
 }

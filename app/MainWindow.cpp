@@ -77,11 +77,11 @@ void MainWindow::initConnection() {
         viewWidget->changeImage(pageModel->pageAt(newPageNum));
     });
     connect(renderModel, &RenderModel::documentChanged, pageModel, &PageModel::updateInfo);
-    connect(documentModel, &DocumentModel::renderAllPagesDone, pageModel, &PageModel::updateImageCache);
-    connect(documentModel, &DocumentModel::renderAllPagesDone, [=](QList<QImage> imageCache){
+    connect(renderModel, &RenderModel::renderAllPagesDone, pageModel, &PageModel::updateImageCache);
+    connect(renderModel, &RenderModel::renderAllPagesDone, [=](QList<QImage> imageCache){
         viewWidget->changeImage(imageCache.first());
     });
-    connect(documentModel, &DocumentModel::renderAllPagesDone, viewWidget,&ViewWidget::loadScrollArea);
+    connect(renderModel, &RenderModel::renderAllPagesDone, viewWidget,&ViewWidget::loadScrollArea);
 }
 
 // function

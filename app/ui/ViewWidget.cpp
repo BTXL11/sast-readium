@@ -4,6 +4,7 @@
 #include "qmessagebox.h"
 #include "qnamespace.h"
 #include "qpalette.h"
+#include "qpixmap.h"
 
 ViewWidget::ViewWidget(QWidget* parent) : QWidget(parent) {
     layout = new QVBoxLayout(this);
@@ -15,9 +16,9 @@ ViewWidget::ViewWidget(QWidget* parent) : QWidget(parent) {
     scrollArea = new QScrollArea(this);
     scrollArea->setAlignment(Qt::AlignCenter);
     scrollArea->setWidgetResizable(true);
-    scrollArea->setFixedSize(500,700);
+    scrollArea->setFixedSize(750,700);
     scrollArea->move(100,0);
-    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     scrollArea->setBackgroundRole(QPalette::Dark);
     scrollArea->close();
@@ -30,8 +31,7 @@ void ViewWidget::changeImage(const QImage& image) {
         label->setText("无法渲染页面");
         return;
     }
-    label->setPixmap(QPixmap::fromImage(image.scaled(label->size() , Qt::KeepAspectRatio, Qt::SmoothTransformation)));
-
+    label->setPixmap(QPixmap::fromImage(image).scaled(label->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
 }
 
 void ViewWidget::loadScrollArea(QList<QImage> imageCache){
@@ -48,7 +48,7 @@ void ViewWidget::loadScrollArea(QList<QImage> imageCache){
     scrollLayout = new QVBoxLayout(scrollWidget);
     for(auto image : imageCache){
         QLabel* label = new QLabel();
-        label->setPixmap(QPixmap::fromImage(image.scaled(scrollArea->size() , Qt::KeepAspectRatio, Qt::SmoothTransformation)));
+        label->setPixmap(QPixmap::fromImage(image).scaled(label->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
         label->setScaledContents(true);
         scrollLayout->addWidget(label);
     }
